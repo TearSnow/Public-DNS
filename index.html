@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public DNS | 精选全球公共DNS服务</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --accent: #2563eb; /* 经典品牌蓝 */
+            --accent-light: #eff6ff;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 3rem 1.5rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        header { text-align: center; margin-bottom: 3rem; }
+        header h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 0.75rem; color: var(--text-main); letter-spacing: -0.025em; }
+        header p { color: var(--text-sub); font-size: 1.125rem; font-weight: 400; }
+
+        /* 搜索框样式 */
+        .search-box { max-width: 560px; margin: 0 auto 2rem auto; position: relative; }
+        .search-box input {
+            width: 100%; padding: 0.875rem 1.25rem 0.875rem 3rem; border-radius: 0.75rem;
+            border: 1px solid var(--border); background: var(--card-bg); color: var(--text-main);
+            font-size: 1rem; outline: none; transition: all 0.2s ease; box-shadow: var(--shadow);
+        }
+        .search-box input::placeholder { color: var(--text-sub); opacity: 0.7; }
+        .search-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .search-box::before {
+            content: '🔍'; position: absolute; left: 1.1rem; top: 50%; transform: translateY(-50%);
+            font-size: 1rem; color: var(--text-sub); pointer-events: none;
+        }
+
+        /* 筛选标签 */
+        .filters { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .filter-btn {
+            background: var(--card-bg); border: 1px solid var(--border); color: var(--text-sub);
+            padding: 0.5rem 1.25rem; border-radius: 2rem; cursor: pointer; transition: all 0.2s ease; 
+            font-size: 0.875rem; font-weight: 500; box-shadow: var(--shadow);
+        }
+        .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .filter-btn.active { background: var(--accent); color: #ffffff; border-color: var(--accent); box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2); }
+
+        /* 筛选状态提示 */
+        .filter-status {
+            text-align: center; margin-bottom: 2rem; font-size: 0.875rem; color: var(--accent); font-weight: 500;
+            display: none; 
+        }
+        .filter-status.show { display: block; }
+
+        /* 卡片网格 */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+
+        .card {
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 1rem;
+            padding: 1.75rem; transition: all 0.3s ease; display: flex; flex-direction: column; gap: 1.25rem;
+            box-shadow: var(--shadow);
+        }
+        .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: transparent; }
+
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .provider-name { font-size: 1.25rem; font-weight: 700; color: var(--text-main); }
+        .provider-desc { font-size: 0.875rem; color: var(--text-sub); margin-top: 0.35rem; line-height: 1.5; }
+
+        .tags { display: flex; gap: 0.375rem; flex-wrap: wrap; flex-shrink: 0; margin-left: 1rem;}
+        .tag { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 0.375rem; background: var(--accent-light); color: var(--accent); font-weight: 600; letter-spacing: 0.02em;}
+
+        /* 地址行 */
+        .dns-row { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: #f1f5f9; padding: 0.65rem 0.85rem; border-radius: 0.5rem; 
+            font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace; font-size: 0.85rem; 
+            margin-bottom: 0.5rem; transition: background 0.2s;
+        }
+        .dns-row:hover { background: #e2e8f0; }
+        .dns-row:last-child { margin-bottom: 0; }
+        
+        .dns-label { color: var(--text-sub); font-size: 0.7rem; margin-bottom: 0.5rem; font-family: sans-serif; letter-spacing: 0.05em; font-weight: 600;}
+        .dns-value { color: var(--text-main); word-break: break-all; flex: 1; user-select: all;}
+        
+        .copy-btn {
+            background: transparent; border: 1px solid transparent; color: var(--text-sub);
+            width: 28px; height: 28px; border-radius: 0.375rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s; flex-shrink: 0; margin-left: 0.75rem; font-size: 0.8rem;
+        }
+        .copy-btn:hover { background: var(--card-bg); border-color: var(--border); color: var(--accent); }
+        .copy-btn.copied { background: var(--accent); border-color: var(--accent); color: #ffffff; }
+
+        footer { text-align: center; line-height: 2em; margin-top: 4rem; color: var(--text-sub); font-size: 0.8rem; opacity: 0.8; }
+        footer a { color: var(--text-sub); text-decoration: none; transition: all 0.2s; }
+
+        @media (max-width: 640px) {
+            body { padding: 2rem 1rem; }
+            header h1 { font-size: 1.75rem; }
+            .grid { grid-template-columns: 1fr; }
+            .card { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Public DNS</h1>
+        <p>精选全球公共 DNS 服务 · 智能筛选与搜索</p>
+    </header>
+
+    <div class="search-box">
+        <input type="text" id="search-input" placeholder="搜索服务商、描述或任意 DNS 地址...">
+    </div>
+
+    <div class="filters" id="filters-container"></div>
+    <div id="filter-status" class="filter-status"></div>
+    <div class="grid" id="dns-grid"></div>
+
+    <footer>
+        <p>数据仅供参考，请以服务商官方文档为准 · 结构数据自动解析</p>
+        <p><a href="https://tearsnow.com" target="_blank">TearSnow</a> / <a href="https://leixue.com" target="_blank">泪雪网</a> / <a href="https://leiue.com" target="_blank">垒阅网</a> / <a href="https://zhangzifan.com" target="_blank">Fanly</a></p>
+    </footer>
+</div>
+
+<script>
+    // 📦 DNS 数据库
+    const dnsData = [
+        {
+            name: "Cloudflare",
+            desc: "全球极速，隐私保护，无日志",
+            ipv4: ["1.1.1.1", "1.0.0.1"],
+            ipv6: ["2606:4700:4700::1111", "2606:4700:4700::1001"],
+            doh: ["https://cloudflare-dns.com/dns-query","https://dns.cloudflare.com/dns-query"],
+            dot: "cloudflare-dns.com"
+        },
+        {
+            name: "Google",
+            desc: "稳定可靠，全球节点覆盖",
+            ipv4: ["8.8.8.8", "8.8.4.4"],
+            ipv6: ["2001:4860:4860::8888", "2001:4860:4860::8844"],
+            doh: "https://dns.google/dns-query",
+            dot: "dns.google"
+        },
+        {
+            name: "Quad9",
+            desc: "安全拦截恶意域名，隐私优先",
+            ipv4: ["9.9.9.9", "149.112.112.112"],
+            ipv6: ["2620:fe::fe", "2620:fe::9"],
+            doh: "https://dns.quad9.net/dns-query",
+            dot: "dns.quad9.net"
+        },
+        {
+            name: "AdGuard DNS",
+            desc: "拦截广告、追踪器和钓鱼网站",
+            ipv4: ["94.140.14.14", "94.140.15.15"],
+            ipv6: ["2a10:50c0::ad1:ff", "2a10:50c0::ad2:ff"],
+            doh: "https://dns.adguard-dns.com/dns-query",
+            dot: "dns.adguard-dns.com"
+        },
+        {
+            name: "AliDNS (阿里)",
+            desc: "国内解析快，防劫持",
+            ipv4: ["223.5.5.5", "223.6.6.6"],
+            ipv6: ["2400:3200::1", "2400:3200:baba::1"],
+            doh: "https://dns.alidns.com/dns-query",
+            dot: "dns.alidns.com"
+        },
+        {
+            name: "DNSPod (腾讯)",
+            desc: "国内智能解析，防污染",
+            ipv4: ["119.29.29.29","119.28.28.28"],
+            ipv6: ["2402:4e00::","2402:4e00:1::"],
+            doh: ["https://doh.pub/dns-query","https://sm2.doh.pub/dns-query"],
+            dot: "dot.pub"
+        }
+    ];
+
+    // 🗺️ 协议大小写映射表
+    const protocolMap = { ipv4: 'IPv4', ipv6: 'IPv6', doh: 'DoH', dot: 'DoT' };
+
+    // 🛠️ 工具函数：复制到剪贴板
+    const copyToClipboard = async (text, btn) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            btn.innerHTML = '✓';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.innerHTML = '📋'; btn.classList.remove('copied'); }, 1500);
+        } catch (err) { console.error('Copy failed', err); }
+    };
+
+    // 🎨 渲染逻辑
+    const grid = document.getElementById('dns-grid');
+    const statusEl = document.getElementById('filter-status');
+    const filtersContainer = document.getElementById('filters-container');
+    const searchInput = document.getElementById('search-input');
+    
+    let activeFilter = 'all'; 
+    let searchKeyword = '';
+
+    // 1. 自动初始化筛选按钮
+    function initFilters() {
+        const supportedProtocols = new Set();
+        dnsData.forEach(dns => {
+            Object.keys(dns).forEach(key => {
+                if (!['name', 'desc'].includes(key) && dns[key]) supportedProtocols.add(key);
+            });
+        });
+
+        let html = `<button class="filter-btn active" data-filter="all">全部</button>`;
+        supportedProtocols.forEach(proto => {
+            const displayName = protocolMap[proto] || proto.toUpperCase();
+            html += `<button class="filter-btn" data-filter="${proto}">${displayName}</button>`;
+        });
+        filtersContainer.innerHTML = html;
+
+        filtersContainer.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                filtersContainer.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeFilter = btn.dataset.filter;
+                renderCards();
+            });
+        });
+    }
+
+    // 2. 核心渲染函数
+    function renderCards() {
+        grid.innerHTML = '';
+        const keyword = searchKeyword.toLowerCase();
+
+        const filtered = dnsData.filter(dns => {
+            if (activeFilter !== 'all') {
+                const val = dns[activeFilter];
+                if (!val || (Array.isArray(val) && val.length === 0)) return false;
+            }
+            if (keyword) {
+                const searchableText = [dns.name, dns.desc, ...Object.values(dns).flat()].join(' ').toLowerCase();
+                return searchableText.includes(keyword);
+            }
+            return true;
+        });
+
+        const activeFilters = [];
+        if (activeFilter !== 'all') activeFilters.push(protocolMap[activeFilter] || activeFilter.toUpperCase());
+        if (keyword) activeFilters.push(`关键词: "${searchKeyword}"`);
+
+        if (activeFilters.length > 0) {
+            statusEl.textContent = `🎯 当前筛选: ${activeFilters.join(' + ')}`;
+            statusEl.classList.add('show');
+        } else {
+            statusEl.classList.remove('show');
+        }
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--text-sub);padding:3rem;">暂无匹配的服务商</div>`;
+            return;
+        }
+
+        filtered.forEach(dns => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            const createRow = (key, value) => {
+                if (!value) return '';
+                if (activeFilter !== 'all' && key !== activeFilter) return '';
+                
+                if (keyword) {
+                    const rowText = Array.isArray(value) ? value.join(' ') : value;
+                    if (!rowText.toLowerCase().includes(keyword)) return '';
+                }
+
+                const values = Array.isArray(value) ? value : [value];
+                let rowsHtml = '';
+                values.forEach(val => {
+                    rowsHtml += `
+                        <div class="dns-row">
+                            <span class="dns-value">${val}</span>
+                            <button class="copy-btn" onclick="copyToClipboard('${val}', this)">📋</button>
+                        </div>
+                    `;
+                });
+                return `<div><div class="dns-label">${protocolMap[key]}</div>${rowsHtml}</div>`;
+            };
+
+            const autoTags = Object.keys(dns).filter(key => {
+                if (['name', 'desc'].includes(key)) return false;
+                const val = dns[key];
+                return (Array.isArray(val) && val.length > 0) || (typeof val === 'string' && val.trim() !== '');
+            });
+            const tagsHtml = autoTags.map(tag => `<span class="tag">${protocolMap[tag]}</span>`).join('');
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <div>
+                        <div class="provider-name">${dns.name}</div>
+                        <div class="provider-desc">${dns.desc}</div>
+                    </div>
+                    <div class="tags">${tagsHtml}</div>
+                </div>
+                ${createRow('ipv4', dns.ipv4)}
+                ${createRow('ipv6', dns.ipv6)}
+                ${createRow('doh', dns.doh)}
+                ${createRow('dot', dns.dot)}
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    searchInput.addEventListener('input', (e) => {
+        searchKeyword = e.target.value.trim();
+        renderCards();
+    });
+
+    initFilters();
+    renderCards();
+</script>
+</body>
+</html>
