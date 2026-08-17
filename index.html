@@ -143,7 +143,7 @@
     // 📦 DNS 数据库
     const dnsData = [
         {
-            name: "Cloudflare",
+            name: "Cloudflare DNS",
             desc: "全球极速，隐私保护，无日志",
             ipv4: ["1.1.1.1", "1.0.0.1"],
             ipv6: ["2606:4700:4700::1111", "2606:4700:4700::1001"],
@@ -151,15 +151,32 @@
             dot: "one.one.one.one"
         },
         {
-            name: "Google",
+            name: "Google Public DNS",
             desc: "稳定可靠，全球节点覆盖",
             ipv4: ["8.8.8.8", "8.8.4.4"],
             ipv6: ["2001:4860:4860::8888", "2001:4860:4860::8844"],
-            doh: "https://dns.google/dns-query",
+            doh: ["https://dns.google/dns-query", "https://8.8.8.8/dns-query"],
             dot: "dns.google"
         },
         {
-            name: "Quad9",
+            name: "阿里 AliDNS",
+            desc: "国内解析快，防劫持",
+            ipv4: ["223.5.5.5", "223.6.6.6"],
+            ipv6: ["2400:3200::1", "2400:3200:baba::1"],
+            doh: ["https://dns.alidns.com/dns-query", "https://223.5.5.5/dns-query"],
+            dot: "dns.alidns.com"
+        },
+        {
+            name: "腾讯 DNSPod",
+            desc: "国内智能解析，防污染",
+            ipv4: ["119.29.29.29","119.28.28.28"],
+            ipv6: ["2402:4e00::","2402:4e00:1::"],
+            doh: "https://doh.pub/dns-query",
+            sm2: "https://sm2.doh.pub/dns-query",
+            dot: "dot.pub"
+        },
+        {
+            name: "IBM Quad9 DNS",
             desc: "安全拦截恶意域名，隐私优先",
             ipv4: ["9.9.9.9", "149.112.112.112"],
             ipv6: ["2620:fe::fe", "2620:fe::9"],
@@ -175,21 +192,89 @@
             dot: "dns.adguard-dns.com"
         },
         {
-            name: "AliDNS (阿里)",
-            desc: "国内解析快，防劫持",
-            ipv4: ["223.5.5.5", "223.6.6.6"],
-            ipv6: ["2400:3200::1", "2400:3200:baba::1"],
-            doh: "https://dns.alidns.com/dns-query",
-            dot: "dns.alidns.com"
+            name: "Cisco OpenDNS",
+            desc: "安全、防钓鱼功能",
+            ipv4: ["208.67.222.222", "208.67.220.220", "208.67.222.220"],
+            ipv6: ["2620:119:35::35", "2620:119:35::36"],
+            doh: ["https://doh.opendns.com/dns-query","https://dns.opendns.com/dns-query"],
+            dot: "doh.opendns.com"
         },
         {
-            name: "DNSPod (腾讯)",
-            desc: "国内智能解析，防污染",
-            ipv4: ["119.29.29.29","119.28.28.28"],
-            ipv6: ["2402:4e00::","2402:4e00:1::"],
-            doh: "https://doh.pub/dns-query",
-            sm2: "https://sm2.doh.pub/dns-query",
-            dot: "dot.pub"
+            name: "DNS.SB",
+            desc: "高速、稳定与防劫持",
+            ipv4: ["185.222.222.222", "185.184.222.222","45.11.45.11"],
+            ipv6: ["2a09::", "2a11::"],
+            doh: ["https://doh.sb/dns-query","https://doh.dns.sb/dns-query"],
+            dot: "dot.sb"
+        },
+        {
+            name: "TWNIC Quad101",
+            desc: "台湾安全、稳定、可信赖且具隐私保护",
+            ipv4: ["101.101.101.101", "101.102.103.104"],
+            ipv6: ["2001:de4::101", "2001:de4::102"],
+            doh: "https://dns.twnic.tw/dns-query",
+            dot: "dns.twnic.tw"
+        },
+        {
+            name: "360安全DNS",
+            desc: "免费、安全且高速",
+            ipv4: ["101.226.4.6", "218.30.118.6"],
+            doh: "https://doh.360.cn/dns-query",
+            dot: "dot.360.cn"
+        },
+        {
+            name: "114DNS",
+            desc: "国内高速稳定、安全抗攻击",
+            ipv4: ["114.114.114.114", "114.114.115.115"]
+        },
+        {
+            name: "火山引擎DNS",
+            desc: "国内免费、安全且防劫持",
+            ipv4: ["180.184.1.1", "210.2.4.8"]
+        },
+        {
+            name: "CNNIC DNS",
+            desc: "中国互联网络信息中心推出的免费权威DNS服务",
+            ipv4: ["1.2.4.8", "180.184.2.2"],
+            ipv6: ["2001:dc7:1000::1"]
+        },
+        {
+            name: "OneDNS",
+            desc: "兼具域名解析与威胁拦截双重能力",
+            ipv4: ["117.50.11.11", "52.80.66.66"],
+            ipv6: ["2402:4e80:1::1"]
+        },
+        {
+            name: "Yandex DNS",
+            desc: "俄罗斯大型DNS服务",
+            ipv4: ["77.88.8.8", "77.88.8.1"],
+            ipv6: ["2a02:6b8::feed:0ff", "2a02:6b8:0:1::feed:0ff"]
+        },
+        {
+            name: "中華電信DNS",
+            desc: "台湾运营商级DNS，适合当地用户",
+            ipv4: ["168.95.192.1", "168.95.1.1"],
+            ipv6: ["2001:b000:168::1", "2001:b000:168::2"]
+        },
+        {
+            name: "香港宽频DNS",
+            desc: "香港运营商级DNS，适合当地用户",
+            ipv4: ["203.80.96.10", "203.80.96.9"]
+        },
+        {
+            name: "澳门电讯CTM DNS",
+            desc: "澳门运营商级DNS，适合当地用户",
+            ipv4: ["202.175.3.8", "202.175.3.3"]
+        },
+        {
+            name: "赛门铁克 诺顿DNS",
+            desc: "安全防护，拦截恶意网站",
+            ipv4: ["199.85.126.10", "199.85.127.10"]
+        },
+        {
+            name: "瑞士瑞信银行DNS",
+            desc: "安全、隐私保护，适合金融用户",
+            ipv4: ["64.6.64.6", "64.6.65.6"]
         }
     ];
 
