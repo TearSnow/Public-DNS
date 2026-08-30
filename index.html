@@ -70,6 +70,7 @@
 
         /* 卡片网格 */
         .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem}
+        .grid:has(.card:only-child){justify-content:center;grid-template-columns:auto}
 
         .card {
             background:var(--card-bg);border:1px solid var(--border);border-radius:1rem;
@@ -134,7 +135,7 @@
     <div class="grid" id="dns-grid"></div>
 
     <footer>
-        <p>数据来自互联网，请以服务商官方为准 · 结构数据自动解析</p>
+        <p>数据来源于公开网络及官方资料，项目由社区共同维护 · <a href="https://github.com/TearSnow/Public-DNS" target="_blank">GitHub</a></p>
         <p><a href="https://tearsnow.com" target="_blank">TearSnow</a> / <a href="https://leixue.com" target="_blank">泪雪网</a> / <a href="https://leiue.com" target="_blank">垒阅网</a> / <a href="https://zhangzifan.com" target="_blank">Fanly</a></p>
         <p><a href="https://cdns.page">Public DNS</a> @ <a href="https://cdns.page">CDNS.PAGE</a></p>
     </footer>
@@ -367,11 +368,6 @@
             const createRow = (key, value) => {
                 if (!value) return '';
                 if (activeFilter !== 'all' && key !== activeFilter) return '';
-                
-                if (keyword) {
-                    const rowText = Array.isArray(value) ? value.join(' ') : value;
-                    if (!rowText.toLowerCase().includes(keyword)) return '';
-                }
 
                 const values = Array.isArray(value) ? value : [value];
                 let rowsHtml = '';
