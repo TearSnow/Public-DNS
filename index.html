@@ -362,12 +362,18 @@
         }
 
         filtered.forEach(dns => {
+            const isMatched = keyword && (dns.name.toLowerCase().includes(keyword) || dns.desc.toLowerCase().includes(keyword));
             const card = document.createElement('div');
             card.className = 'card';
             
-            const createRow = (key, value) => {
+            const createRow = (key, value, isMatched) => {
                 if (!value) return '';
                 if (activeFilter !== 'all' && key !== activeFilter) return '';
+
+                if (keyword && !isMatched) {
+                    const rowText = Array.isArray(value) ? value.join(' ') : value;
+                    if (!rowText.toLowerCase().includes(keyword)) return '';
+                }
 
                 const values = Array.isArray(value) ? value : [value];
                 let rowsHtml = '';
@@ -390,7 +396,7 @@
             const tagsHtml = autoTags.map(tag => `<span class="tag">${protocolMap[tag]}</span>`).join('');
 
             const protocolKeys = Object.keys(protocolMap);
-            const protocolRowsHtml = protocolKeys.map(key => createRow(key, dns[key])).filter(html => html !== '').join('');
+            const protocolRowsHtml = protocolKeys.map(key => createRow(key, dns[key], isMatched)).filter(html => html !== '').join('');
             card.innerHTML = `
                 <div class="card-header">
                     <div>
